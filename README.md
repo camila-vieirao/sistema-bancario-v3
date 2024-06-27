@@ -78,3 +78,25 @@ classDiagram
     }
 ```
 
+## Autenticação de Dois Fatores: OTP   
+Implementei um mecanismo de Autenticação de Dois Fatores (OTP) para oferecer uma camada adicional de segurança aos usuários do sistema bancário.
+
+### Como funciona?
+
+- Durante o cadastro, os usuários têm a opção de ativar a autenticação de dois fatores (OTP).
+- Um código OTP é enviado para o e-mail fornecido pelo usuário
+    > É possível utilizar um **e-mail temporário** através do [TEMPMAIL](https://temp-mail.org/en/)
+- O código OTP é necessário para realizar login e operações sensíveis no sistema, garantindo maior segurança.
+
+## Instruções de Uso
+
+**Para utilizar o sistema bancário:**
+
+1. Clone o repositório para sua máquina local.
+2. Execute o programa principal `main.py`  para iniciar o sistema.
+3. Siga as instruções fornecidas no terminal para criar contas, realizar transações e visualizar extratos.
+
+## Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para propor melhorias, novas funcionalidades ou reportar problemas encontrados.
+
