@@ -1,5 +1,6 @@
 from menu_transacoes import menu_operacoes_bancarias
 from operacoes import PessoaFisica, ContaCorrente
+from otp import OTPService
 
 MENU = '''
 ========= BEM-VINDO! =========
@@ -68,15 +69,27 @@ def criar_usuario():
     uf = input("UF: ").strip().upper()
 
     endereco = f"{logradouro}, {numero_casa} - {bairro} - {cidade}/{uf}"
-    usuario = PessoaFisica(cpf=cpf, nome=nome, data_nascimento=data_nascimento, endereco=endereco)
+    senha = input("Crie uma senha (máximo 4 caracteres): ").strip()
+    if len(senha) > 4:
+        print("Senha deve ter no máximo 4 caracteres. Cadastro não concluído.")
+        return
+
+    optar_otp = input("Deseja ativar autenticação de dois fatores (OTP)? (S/N): ").upper()
+    otp_ativo = optar_otp == "S"
+
+    if otp_ativo:
+        email = input("Digite seu e-mail para receber o OTP: ")
+        otp_digitado = OTPService.enviar_otp_email(email)
+
+        otp_digitado_usuario = input("Digite o OTP recebido por e-mail: ")
+        if not OTPService.verificar_otp(otp_digitado_usuario, otp_digitado):
+            print("OTP incorreto. Cadastro não concluído.")
+            return
+
+    usuario = PessoaFisica(cpf=cpf, nome=nome, data_nascimento=data_nascimento, endereco=endereco, senha=senha, otp_ativo=otp_ativo)
 
     clientes.append(usuario)
-    print("Usuário criado com sucesso!")
-    print("Dados do Usuário:")
-    print(f"Nome: {usuario.nome}")
-    print(f"Data de Nascimento: {usuario.data_nascimento}")
-    print(f"CPF: {usuario.cpf}")
-    print(f"Endereço: {usuario.endereco}")
+    print("Cadastro concluído com sucesso!")
 
 def criar_conta_corrente():
     print(MSG_CRIAR_CONTA_CORRENTE)
@@ -107,7 +120,21 @@ def login_usuario():
 
     usuario = next((cliente for cliente in clientes if cliente.cpf == cpf), None)
     if usuario:
-        print("Usuário autenticado!")
+        senha = input("Digite a senha: ")
+        if usuario.senha == senha:
+            if usuario.otp_ativo:
+                email = input("Digite seu e-mail para receber a OTP: ")
+                otp_digitado = OTPService.enviar_otp_email(email)
+
+                otp_digitado_usuario = input("Digite o OTP recebido por e-mail: ")
+                if not OTPService.verificar_otp(otp_digitado_usuario, otp_digitado):
+                    print("OTP incorreto. Login não concluído.")
+                    return None
+            print("Usuário autenticado!")
+            return usuario
+        else:
+            print("Senha incorreta.")
     else:
         print("CPF não cadastrado.")
-    return usuario
+    return None
+

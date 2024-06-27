@@ -13,11 +13,13 @@ class Cliente:
         self.contas.append(conta)
 
 class PessoaFisica(Cliente):
-    def __init__(self, cpf, nome, data_nascimento, endereco):
+    def __init__(self, cpf, nome, data_nascimento, endereco, senha, otp_ativo=False):
         super().__init__(endereco)
         self.cpf = cpf
         self.nome = nome
         self.data_nascimento = data_nascimento
+        self.senha = senha
+        self.otp_ativo = otp_ativo
 
 class Conta:
     def __init__(self, numero, cliente):
@@ -55,8 +57,11 @@ class Conta:
 
     def depositar(self, valor):
         if valor < 0:
+            print("O valor do depósito deve ser positivo.")
             return False
+        
         self._saldo += valor
+        print(f"Depósito de R$ {valor:.2f} realizado com sucesso.")
         return True
 
 class ContaCorrente(Conta):
@@ -66,13 +71,18 @@ class ContaCorrente(Conta):
         self.limite_saques = limite_saques
 
     def sacar(self, valor):
+        saldo_disponivel = self.saldo
+        if valor > saldo_disponivel:
+            print(f"O valor do saque (R$ {valor:.2f}) excede o saldo disponível (R$ {self.saldo:.2f}).")
+            return False
         if valor > self.limite:
-            print("O valor do saque excede o limite.")
+            print(f"O valor do saque (R$ {valor:.2f}) excede o limite (R$ {self.limite:.2f}).")
             return False
         numero_saques = len([t for t in self.historico.transacoes if t['tipo'] == 'Saque'])
         if numero_saques >= self.limite_saques:
             print("Limite de saques excedido.")
             return False
+        print(f"Saque de R$ {valor:.2f} realizado com sucesso.")
         return super().sacar(valor)
 
 class Historico:
