@@ -42,7 +42,7 @@ def menu_inicio():
                 if usuario.contas:
                     menu_operacoes_bancarias(usuario)
                 else:
-                    print("Usuário não possui conta corrente. Crie uma conta primeiro.")
+                    print("\n => Usuário não possui conta corrente. Crie uma conta primeiro. <=")
         elif opcao == "4":
             print("Saindo... ")
             break
@@ -58,7 +58,7 @@ def criar_usuario():
     cpf = ''.join(filter(str.isdigit, cpf_inicio))
 
     if any(cliente.cpf == cpf for cliente in clientes):
-        print("Usuário com esse CPF já cadastrado.")
+        print("\n => Usuário com esse CPF já cadastrado. <=")
         return
 
     print("\n============ ENDEREÇO ============")
@@ -71,7 +71,7 @@ def criar_usuario():
     endereco = f"{logradouro}, {numero_casa} - {bairro} - {cidade}/{uf}"
     senha = input("Crie uma senha (máximo 4 caracteres): ").strip()
     if len(senha) > 4:
-        print("Senha deve ter no máximo 4 caracteres. Cadastro não concluído.")
+        print("\n => Senha deve ter no máximo 4 caracteres. Cadastro não concluído. <=")
         return
 
     optar_otp = input("Deseja ativar autenticação de dois fatores (OTP)? (S/N): ").upper()
@@ -83,13 +83,13 @@ def criar_usuario():
 
         otp_digitado_usuario = input("Digite o OTP recebido por e-mail: ")
         if not OTPService.verificar_otp(otp_digitado_usuario, otp_digitado):
-            print("OTP incorreto. Cadastro não concluído.")
+            print("\n => OTP incorreto. Cadastro não concluído. <=")
             return
 
     usuario = PessoaFisica(cpf=cpf, nome=nome, data_nascimento=data_nascimento, endereco=endereco, senha=senha, otp_ativo=otp_ativo)
 
     clientes.append(usuario)
-    print("Cadastro concluído com sucesso!")
+    print("\n => Cadastro concluído com sucesso! <=")
 
 def criar_conta_corrente():
     print(MSG_CRIAR_CONTA_CORRENTE)
@@ -99,7 +99,7 @@ def criar_conta_corrente():
 
     usuario = next((cliente for cliente in clientes if cliente.cpf == cpf), None)
     if usuario is None:
-        print("CPF não cadastrado. Crie um usuário primeiro.")
+        print("\n => CPF não cadastrado. Crie um usuário primeiro. <=")
         return
 
     agencia = "0001"
@@ -109,7 +109,7 @@ def criar_conta_corrente():
     contas.append(conta)
     usuario.adicionar_conta(conta)
 
-    print("Conta criada com sucesso!")
+    print("\n => Conta criada com sucesso! <=")
     print(f"Agência: {agencia}")
     print(f"Número da Conta: {numero_conta}")
     print(f"Usuário: {usuario.nome}")
@@ -126,11 +126,11 @@ def login_usuario():
                 email = input("Digite seu e-mail para receber a OTP: ")
                 otp_digitado = OTPService.enviar_otp_email(email)
 
-                otp_digitado_usuario = input("Digite o OTP recebido por e-mail: ")
+                otp_digitado_usuario = input("Digite a OTP recebido por e-mail: ")
                 if not OTPService.verificar_otp(otp_digitado_usuario, otp_digitado):
-                    print("OTP incorreto. Login não concluído.")
+                    print("\n => OTP incorreto. Login não concluído. <=")
                     return None
-            print("Usuário autenticado!")
+            print("\n => Usuário autenticado! <=")
             return usuario
         else:
             print("Senha incorreta.")

@@ -59,7 +59,16 @@ def sacar(usuario):
 def mostrar_extrato(usuario):
     conta = selecionar_conta(usuario)
     print("\n================ EXTRATO ================")
-    for transacao in conta.historico.transacoes:
-        print(f"{transacao['data']} - {transacao['tipo']}: R${transacao['valor']:.2f}")
+    extrato =  ""
+    tem_transacao = False
+
+    for transacao in conta.historico.gerar_relatorio():
+        tem_transacao = True
+        extrato += (f"\n{transacao['data']} - {transacao['tipo']}: R${transacao['valor']:.2f}")
+
+    if not tem_transacao:
+        extrato = "Não foram realizadas movimentações"
+
+    print(extrato)
     print(f"\nSaldo: R$ {conta.saldo:.2f}")
     print("==========================================")

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, timezone
+LIMITE_DE_TRANSACOES = 10
 
 class Cliente:
     def __init__(self, endereco):
@@ -7,6 +8,9 @@ class Cliente:
         self.contas = []
 
     def realizar_transacao(self, conta, transacao):
+        if (len(conta.historico.transacoes_do_dia()) >= LIMITE_DE_TRANSACOES):
+            print(f"\n Falha na Transação - Número de transações diárias excedido ({LIMITE_DE_TRANSACOES})")
+            return
         transacao.registrar(conta)
 
     def adicionar_conta(self, conta):
@@ -97,8 +101,22 @@ class Historico:
         self._transacoes.append({
             'tipo': transacao.__class__.__name__,
             'valor': transacao.valor,
-            'data': datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
+            'data': datetime.now(timezone.utc).strftime("%d-%m-%Y %H:%M:%S"),
         })
+
+    def gerar_relatorio(self, tipo_transacao = None):
+        for transacao in self._transacoes:
+            if tipo_transacao is None or transacao["tipo"].lower() == tipo_transacao.lower():
+                yield transacao
+
+    def transacoes_do_dia(self):
+        data_atual = datetime.now(timezone.utc).date()
+        transacoes = []
+        for transacao in self._transacoes:
+            data_transacao = datetime.strptime(transacao["data"], "%d-%m-%Y %H:%M:%S").date()
+            if data_atual == data_transacao:
+                transacoes.append(transacao)
+        return transacoes
 
 class Transacao(ABC):
     @property

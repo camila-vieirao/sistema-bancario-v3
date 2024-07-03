@@ -99,4 +99,3 @@ Implementei um mecanismo de Autenticação de Dois Fatores (OTP) para oferecer u
 ## Contribuição
 
 Contribuições são bem-vindas! Sinta-se à vontade para propor melhorias, novas funcionalidades ou reportar problemas encontrados.
-
